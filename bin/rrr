@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'rubygems'
+require 'commander'
+
+class RosettaRockRunner
+  include Commander::Methods
+  # include whatever modules you need
+
+  def run
+    program :name, 'rrr'
+    program :version, '0.0.1'
+    program :description, 'Rosetta Rock - Manage and Edit your programming repo.'
+
+    command :problem do |c|
+      c.syntax = 'rrr problem <name> [options]'
+      c.summary = 'Initialize or update a problem set'
+      c.description = 'Initialize an empty folder with a RosettaRock problem template, or update an existing folder, allowing a quick start into coding a solution set.'
+      c.example 'Create a new FizzBuzz problem.', 'rrr problem FizzBuzz'
+      c.option '--repo STRING', 'Path to github repo (if not current directory)'
+      c.option '--short_description STRING', 'Short description of the problem'
+      c.option '--long_description FILE','Description file or url to include in the problem set.'
+      c.option '--source_link STRING','Link or reference to the original source (optional). (e.g. Project Euler, ACM, CodeGolf, etc)'
+      c.option '--input_file FILE', 'Input file(s) to include in the problem set.'
+      c.option '--output_file FILE', 'Output file(s) to include in the problem set.'
+      c.action do |args, options|
+        # Do something or c.when_called Rr::Commands::Problem
+        project_name = args.shift || abort('Project Name is required.')
+        options.default \
+          :repo => './',
+          :short_description => "#{ project_name } - problem-set"
+
+        project_location = File.join(options.repo, "problems/#{ project_name }")
+          # initialize the project
+          unless Dir.exist?(project_location)
+            FileUtils.mkdir_p(project_location)
+            puts "Successfully created #{ project_name } at #{ project_location }"
+          end
+  
+          readme_file = File.join(project_location, 'README.md')
+  
+          File.open(readme_file, 'w') do |f|
+            f.write("\# #{ project_name }\n")
+            f.write(options.short_description)
+          end
+  
+          File.chmod(0755, readme_file)
+          puts "Initialized README in #{ readme_file }"
+      end
+    end
+
+    command :language do |c|
+      c.syntax = 'rrr language [options]'
+      c.summary = ''
+      c.description = ''
+      c.example 'description', 'command example'
+      c.option '--some-switch', 'Some switch that does something'
+      c.action do |args, options|
+        # Do something or c.when_called Rr::Commands::Language
+      end
+    end
+
+    run!
+  end
+end
+
+RosettaRockRunner.new.run if $0 == __FILE__
