@@ -1,0 +1,17 @@
+PATH
+  remote: .
+  specs:
+    rosetta_rock (0.0.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rosetta_rock!
+
+BUNDLED WITH
+   1.12.4
